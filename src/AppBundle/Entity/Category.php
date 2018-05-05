@@ -7,43 +7,42 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Category
  *
- * @ORM\Table(name="category", indexes={@ORM\Index(name="post_category_fk", columns={"post_id"})})
- * @ORM\Entity
+ * @ORM\Table(name="category")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
  */
 class Category
 {
     /**
-     * @var integer
+     * @var int
      *
-     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @ORM\Column(name="name", type="string", unique=true, length=255)
      */
     private $name;
-
-    /**
-     * @var \Post
-     *
-     * @ORM\ManyToOne(targetEntity="Post")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="post_id", referencedColumnName="id")
-     * })
-     */
-    private $post;
-
+  
+   /**
+    * @var \Post
+    *
+    * @ORM\ManyToOne(targetEntity="Post")
+    * @ORM\JoinColumns({
+    *   @ORM\JoinColumn(name="post_id", referencedColumnName="id", nullable=true)
+    * })
+    */
+   private $post;
 
 
     /**
      * Get id
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -96,10 +95,5 @@ class Category
     public function getPost()
     {
         return $this->post;
-    }
-  
-  public function __toString()
-    {
-        return $this->getName();
     }
 }

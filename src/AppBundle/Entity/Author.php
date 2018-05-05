@@ -8,46 +8,45 @@ use Doctrine\ORM\Mapping as ORM;
  * Author
  *
  * @ORM\Table(name="author")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\AuthorRepository")
  */
 class Author
 {
     /**
-     * @var integer
+     * @var int
      *
-     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="last_name", type="string", length=255, nullable=false)
+     * @ORM\Column(name="last_name", type="string", length=255)
      */
     private $lastName;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="code", type="string", length=10, nullable=false)
+     * @ORM\Column(name="code", type="string", length=10, unique=true)
      */
     private $code;
-
 
 
     /**
      * Get id
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -124,10 +123,5 @@ class Author
     public function getCode()
     {
         return $this->code;
-    }
-  
-  public function __toString()
-    {
-        return $this->getName()." ".$this->getLastname();
     }
 }

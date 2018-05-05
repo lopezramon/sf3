@@ -7,57 +7,68 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Post
  *
- * @ORM\Table(name="post", indexes={@ORM\Index(name="author_post_fk", columns={"author_id"})})
- * @ORM\Entity
+ * @ORM\Table(name="post")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PostRepository")
  */
 class Post
 {
     /**
-     * @var integer
+     * @var int
      *
-     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="title", type="string", length=255, nullable=false)
+     * @ORM\Column(name="title", type="string", length=255)
      */
     private $title;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="body", type="text", length=65535, nullable=false)
+     * @ORM\Column(name="body", type="text")
      */
     private $body;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="posted_at", type="datetime", nullable=false)
+     * @ORM\Column(name="posted_at", type="datetime")
      */
     private $postedAt;
+  
+   /**
+    * @var \Author
+    *
+    * @ORM\ManyToOne(targetEntity="Author")
+    * @ORM\JoinColumns({
+    *   @ORM\JoinColumn(name="author_id", referencedColumnName="id", nullable=true)
+    * })
+    */
+   private $author = null;
+  
+  /**
+   * Many Post have Many Categories
+   * @ORM\ManyToMany(targetEntity="Category")
+   * @ORM\JoinTable(name="postes_categories",
+   * joinColumns={@ORM\JoinColumn(name="post_id", referencedColumnName="id")},
+   * inverseJoinColumns={@ORM\JoinColumn(name="category_id", referencedColumnName="id")}
+   *      )
+   */
+    private $categories;
 
-    /**
-     * @var \Author
-     *
-     * @ORM\ManyToOne(targetEntity="Author")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="author_id", referencedColumnName="id")
-     * })
-     */
-    private $author;
-
-
-
+    public function __construct() {
+        $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
+    }
     /**
      * Get id
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -159,9 +170,38 @@ class Post
     {
         return $this->author;
     }
-  
-  public function __toString()
+
+    /**
+     * Add category
+     *
+     * @param \AppBundle\Entity\Category $category
+     *
+     * @return Post
+     */
+    public function addCategory(\AppBundle\Entity\Category $category)
     {
-        return $this->getTitle();
+        $this->categories[] = $category;
+
+        return $this;
+    }
+
+    /**
+     * Remove category
+     *
+     * @param \AppBundle\Entity\Category $category
+     */
+    public function removeCategory(\AppBundle\Entity\Category $category)
+    {
+        $this->categories->removeElement($category);
+    }
+
+    /**
+     * Get categories
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCategories()
+    {
+        return $this->categories;
     }
 }
